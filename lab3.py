@@ -33,7 +33,8 @@ for i in array:
     i.size = random.randint(10, 100)
 
 for i in array:
-    print(f"{i.size}, {i.tireSize}, {i.power}, {i.weight}, {i.turningRadius}, {i.hydraulicSystem}, {i.clearance}, {i.fuelTankCapacity}, {i.revolutions}, {i.workingVolume}")
+    print(
+        f"{i.size}, {i.tireSize}, {i.power}, {i.weight}, {i.turningRadius}, {i.hydraulicSystem}, {i.clearance}, {i.fuelTankCapacity}, {i.revolutions}, {i.workingVolume}")
 
 s1, s2, s3, s4, s5, s6, s7, s8, s9, s10 = 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 length = len(array)
@@ -49,4 +50,5 @@ for i in array:
     s9 += i.turningRadius
     s10 += i.tireSize
 
-print(f"{s1/length}, {s2/length}, {s3/length}, {s4/length}, {s5/length}, {s6/length}, {s7/length}, {s8/length}, {s9/length}, {s10/length}")
+print(
+    f"{s1 / length}, {s2 / length}, {s3 / length}, {s4 / length}, {s5 / length}, {s6 / length}, {s7 / length}, {s8 / length}, {s9 / length}, {s10 / length}")
