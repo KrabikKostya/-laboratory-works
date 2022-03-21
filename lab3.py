@@ -1,4 +1,4 @@
-import random
+from random import randint, uniform
 
 
 class Tractor(object):
@@ -14,23 +14,23 @@ class Tractor(object):
     size = 50
 
 
-n = random.randint(1, 10)
+n = randint(1, 10)
 array = []
 for i in range(n):
     tractor = Tractor()
     array.append(tractor)
 
 for i in array:
-    i.power = random.randint(200, 300)
-    i.workingVolume = random.uniform(5, 10)
-    i.revolutions = random.randint(3000, 3500)
-    i.hydraulicSystem = random.randint(2, 6)
-    i.tireSize = random.uniform(20, 30)
-    i.turningRadius = random.uniform(5, 10)
-    i.clearance = random.randint(500, 600)
-    i.weight = random.randint(5000, 6000)
-    i.fuelTankCapacity = random.randint(300, 400)
-    i.size = random.randint(10, 100)
+    i.power = randint(200, 300)
+    i.workingVolume = uniform(5, 10)
+    i.revolutions = randint(3000, 3500)
+    i.hydraulicSystem = randint(2, 6)
+    i.tireSize = uniform(20, 30)
+    i.turningRadius = uniform(5, 10)
+    i.clearance = randint(500, 600)
+    i.weight = randint(5000, 6000)
+    i.fuelTankCapacity = randint(300, 400)
+    i.size = randint(10, 100)
 
 for i in array:
     print(
@@ -54,3 +54,4 @@ for i in array:
 print(
     f"{s1 / length}, {s2 / length}, {s3 / length}, {s4 / length}, {s5 / length}, {s6 / length}, {s7 / length}, {s8 / length}, {s9 / length}, {s10 / length}"
 )
+
