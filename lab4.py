@@ -3,9 +3,9 @@ from random import randint
 #1
 m = 10
 n = 10
-array = [[randint(-1000, 1001) for i in range(m)] for j in range(n)]
 s = 0
 slice = 1
+array = [[randint(-1000, 1001) for i in range(m)] for j in range(n)]
 print(array)
 for i in array:
     s += sum(i)
