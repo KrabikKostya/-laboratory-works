@@ -20,8 +20,6 @@ class Customer(base):
 class Item(base):
     __tablename__ = 'items'
     id = Column(Integer(), primary_key=True)
-    name = Column(String(200), nullable=False)
-    cost_price = Column(Numeric(10, 2), nullable=False)
     selling_price = Column(Numeric(10, 2), nullable=False)
     quantity = Column(Integer())
     serial_number = Column(Integer())
@@ -42,6 +40,12 @@ class OrderLine(base):
     item_id = Column(Integer(), ForeignKey('items.id'))
     quantity = Column(SmallInteger())
     item = relationship("Item")
+
+
+class Materials(base):
+    __tablename__ = "materials"
+    id = Column(Integer(), primary_key=True)
+    material_name = Column(String(25), nullable=False)
 
 
 engine.connect()
