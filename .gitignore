@@ -28,3 +28,4 @@ bin-release/
 /CreativeTask/sqlite3.db
 input.txt
 output.txt
+.png
