@@ -1,4 +1,4 @@
-from sqlalchemy import create_engine, Integer, String, Column, DateTime, ForeignKey, Numeric, SmallInteger
+from sqlalchemy import create_engine, Integer, String, Column, DateTime, ForeignKey, Float, SmallInteger
 from sqlalchemy.ext.declarative import declarative_base
 from datetime import datetime
 from sqlalchemy.orm import relationship
@@ -20,7 +20,7 @@ class Customer(base):
 class Item(base):
     __tablename__ = 'items'
     id = Column(Integer(), primary_key=True)
-    selling_price = Column(Numeric(10, 2), nullable=False)
+    selling_price = Column(Float(), nullable=False)
     quantity = Column(Integer())
     serial_number = Column(Integer())
 
@@ -31,6 +31,7 @@ class Order(base):
     customer_id = Column(Integer(), ForeignKey('customers.id'))
     date_placed = Column(DateTime(), default=datetime.now)
     line_items = relationship("OrderLine", backref='order')
+    order_number = Column(Integer())
 
 
 class OrderLine(base):

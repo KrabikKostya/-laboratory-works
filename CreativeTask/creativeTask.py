@@ -1,4 +1,4 @@
-from db import engine, base, Customer, Item, Order, OrderLine, Materials
+from db import engine, Customer, Item, Order, OrderLine, Materials
 from sqlalchemy.orm import Session
 from time import sleep
 from random import randint
@@ -12,7 +12,8 @@ def main():
         "3 - Вибрати матеріал для меблів",
         "4 - Замовити заготовку з скаладу",
         "5 - Обчислення габаритів(об'єму, площі) виробу",
-        "6 - Про програму",
+        "6 - Додати замовлення",
+        "7 - Про програму",
         "0 - Вихід",
         sep="\n",
     )
@@ -20,7 +21,7 @@ def main():
         answer = int(input("Виберіть пункт меню: "))
         if answer == 0:
             App._exit()
-        elif answer == 6:
+        elif answer == 7:
             App.about()
         elif answer == 5:
             App.calculationOfDimensions()
@@ -32,6 +33,8 @@ def main():
             App.buyerAssistant()
         elif answer == 1:
             App.orderSum()
+        elif answer == 6:
+            App.makeOrder()
         else:
             print(
                 "Невыдома команда",
@@ -39,7 +42,7 @@ def main():
                 sep="\n"
             )
             main()
-    except Exception:
+    except ValueError:
         App.error()
 
 
@@ -95,70 +98,76 @@ class App:
 
     @staticmethod
     def calculationOfDimensions():
-        try:
-            dimensions = map(float, input("Введіть довжину, ширену і висоту (в метрах): ").split(","))
-            summ = 1
-            dimensions = list(dimensions)
-            for i in dimensions:
-                summ *= i
-            print(f"Габарити виробу складають: {summ} метрів кубічних і {summ/dimensions[2]} метрів квадратних")
-            App.question()
-        except Exception:
-            App.error()
+        dimensions = map(float, input("Введіть довжину, ширену і висоту (в метрах): ").split(","))
+        summ = 1
+        dimensions = list(dimensions)
+        for i in dimensions:
+            summ *= i
+        print(f"Габарити виробу складають: {summ} метрів кубічних і {summ/dimensions[2]} метрів квадратних")
+        App.question()
 
     @staticmethod
-    def make_order():
+    def makeOrder():
         session = Session(bind=engine)
-        try:
-            first_name = input("first_name: ")
-            last_name = input("last_name: ")
-            quantity = int(input("quantity: "))
-            serial_number = int(input("serial_number: "))
-            customer = Customer(
-                first_name=first_name,
-                last_name=last_name
+        first_name = input("first_name: ")
+        last_name = input("last_name: ")
+        quantity = int(input("quantity: "))
+        serial_number = int(input("serial_number: "))
+        customer = Customer(
+            first_name=first_name,
+            last_name=last_name
+        )
+        for i in range(10):
+            item = Item(
+                selling_price=randint(500, 5000),
+                quantity=randint(0, 1000),
+                serial_number=App.randomaizer(range(10), 4)
             )
-            session.add(customer)
+            session.add(item)
             session.commit()
-            for i in range(10):
-                item = Item(
-                    selling_price=randint(500, 2000),
-                    quantity=randint(0, 1000),
-                    serial_number=App.randomaizer(range(10), 4)
-                )
-                session.add(item)
-                session.commit()
-            order = Order(customer=customer)
+        order = Order(
+            customer=customer,
+            order_number=App.randomaizer(range(10), 10)
+        )
+        id = session.query(Item).filter(Item.serial_number == serial_number).all()
+        if len(list(id)) > 0:
             order_lines = OrderLine(
-                item=session.query(Item).filter(Item.serial_number == serial_number),
+                item=session.query(Item).get(id[0].id),
                 quantity=quantity
             )
             order.line_items.append(order_lines)
-            session.add_all([order, order_lines])
+            session.add(order)
+            session.add(order_lines)
+            session.add(customer)
             session.commit()
-        except Exception:
-            App.error()
+            print(
+                "Ваше замовлення успишно додано",
+                f"Ваш номер замовлення: {session.query(Order).all()[len(session.query(Order).all())].order_number}"
+            )
+        else:
+            print("Нажаль виробу більше немає на складі")
+            session.rollback()
+        App.question()
 
     @staticmethod
     def order():
         from time import sleep
-        try:
-            answer = int(input("Введіть номер виробу: "))
-            print("Пошук в базах данних складу...")
-            sleep(10)
-            print(f"Виріб №{answer} замовлено, дякуємо, що вибрали нас")
-            App.question()
-        except Exception:
-            App.error()
+        answer = int(input("Введіть номер замовлення: "))
+        print("Пошук в базах данних складу...")
+        sleep(5)
+        session = Session(bind=engine)
+        id = session.query(Order).filter(Order.order_number == answer).all()
+        if len(id) > 0:
+            print(f"Замовлення №{answer} зроблено, дякуємо, що вибрали нас")
+        else:
+            print("Такого замовлення не існує")
+        App.question()
 
     @staticmethod
     def orderSum():
-        try:
-            price = map(float, input("Введіть ціни на замовлені товари: ").split(" "))
-            print(f"Кінцева вартість замовлення: {sum(price)} грн.")
-            App.question()
-        except Exception:
-            App.error()
+        price = map(float, input("Введіть ціни на замовлені товари: ").split(" "))
+        print(f"Кінцева вартість замовлення: {sum(price)} грн.")
+        App.question()
 
     @staticmethod
     def buyerAssistant():
@@ -177,14 +186,11 @@ class App:
             "2 - Ні",
             sep="\n"
         )
-        try:
-            answer = int(input("Виберіть пункт меню: "))
-            if answer == 1:
-                App.order()
-            else:
-                App.question()
-        except Exception:
-            App.error()
+        answer = int(input("Виберіть пункт меню: "))
+        if answer == 1:
+            App.order()
+        else:
+            App.question()
 
     @staticmethod
     def about():

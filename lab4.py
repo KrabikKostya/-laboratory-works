@@ -13,12 +13,12 @@ for i in array:
     for j in i:
         if j % s == 0:
             k += 1
-print(array)
+print(*array, sep="\n")
 print(k)
 #2
-slices = 1
 for i in array:
+    slices = 1
     for j in range(n):
         i[j] = sum(i[0:slices])
         slices += 1
-print(array)
+print(*array, sep="\n")
